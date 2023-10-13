@@ -1,19 +1,20 @@
 import { ContactListItem } from 'components/ContactListItem';
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchContacts } from 'redux/operations';
+import { selectFilteredContacts } from 'redux/selectors';
 export const ContactList = () => {
-  const users = useSelector(state => state.contacts);
-  const query = useSelector(state => state.filter);
-  const filtered = users.filter(user =>
-    user.name.toLowerCase().includes(query)
-  );
+  const dispatch = useDispatch();
+  const filtered = useSelector(selectFilteredContacts);
 
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
   return (
     <ul>
       {filtered &&
-        filtered.map(({ id, name, number }) => {
-          return (
-            <ContactListItem key={id} id={id} user={name} phone={number} />
-          );
+        filtered.map(({ id, name, phone }) => {
+          return <ContactListItem key={id} id={id} user={name} phone={phone} />;
         })}
     </ul>
   );
